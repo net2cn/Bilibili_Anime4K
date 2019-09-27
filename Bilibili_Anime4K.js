@@ -1,23 +1,20 @@
 // ==UserScript==
-// @name         Bilibili_Anime4K
-// @namespace    http://net2cn.tk/
-// @homepageURL  https://github.com/net2cn/Bilibili_Anime4K/
-// @supportURL   https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version      0.1
-// @description  Bring Anime4K to Bilibili's HTML5 player.
-// @author       net2cn
-// @copyright    bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
-// @match        *://www.bilibili.com/video/av*
-// @match        *://bangumi.bilibili.com/anime/*/play*
-// @match        *://www.bilibili.com/bangumi/play/ep*
-// @match        *://www.bilibili.com/bangumi/play/ss*
-// @match        *://www.bilibili.com/bangumi/media/md*
-// @match        *://www.biligame.com/detail/*
-// @match        *://vc.bilibili.com/video/*
-// @match        *://www.bilibili.com/watchlater/
-// @grant        none
-// @license      MIT License
-// @run-at       document-idle
+// @name                Bilibili_Anime4K
+// @name:zh-CN          Bilibili Anime4K滤镜
+// @description         Bring Anime4K to Bilibili's HTML5 player.
+// @description:zh-CN   通过Anime4K滤镜让Bilibili上的番剧更加清晰
+// @namespace           http://net2cn.tk/
+// @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
+// @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
+// @version             0.1
+// @author              net2cn
+// @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
+// @match               *://www.bilibili.com/video/av*
+// @match               *://bangumi.bilibili.com/anime/*/play*
+// @match               *://www.bilibili.com/bangumi/play/ep*
+// @grant               none
+// @license             MIT License
+// @run-at              document-idle
 // ==/UserScript==
 
 // WebGL implementation by NeuroWhAI.
