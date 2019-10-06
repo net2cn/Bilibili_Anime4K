@@ -1,10 +1,10 @@
 # Bilibili_Anime4K
-Bring Anime4K filter to all the animes you love on [Bilibili](https://www.bilibili.com/)!
+Bring Anime4K filter to all the 2D anime you love on [Bilibili](https://www.bilibili.com/)!
 
 [[中文README]](README_zh.md)
 
 # Usage
-Load and enable Bilibili_Anime4K.js in your TamperMonkey. Chrome 77 tested.
+Load and enable Bilibili_Anime4K.js in your TamperMonkey. Chrome 77 tested. Note that this should only be enabled on 2D anime since the filter just isn't fit for other type of videos.
 
 If you want to disable filter for some video just disable the script in your TamperMonekey (since I haven't made a control panel yet... PRs are welcome).
 
