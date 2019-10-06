@@ -1,8 +1,12 @@
 # Bilibili_Anime4K
 通过Anime4K滤镜让[Bilibili](https://www.bilibili.com/)上的番剧更加锐利!
 
+[[English README]](README.md)
+
 # 用法
-在TamperMonkey拓展中安装该脚本。已在Chrome 77上通过测试。
+在TamperMonkey拓展中安装并启用该脚本。已在Chrome 77上通过测试。
+
+如果你想为某些视频关闭滤镜直接在TamperMonkey拓展里面关掉脚本就好（因为我还没有写控制面板……欢迎发PR）。
 
 # 360p分辨率上的对比
 ![对比](images/Comparison.png?raw=true)

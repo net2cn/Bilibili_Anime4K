@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.1
+// @version             0.2
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -551,6 +551,10 @@ Scaler.prototype.render = function() {
     const finalPgm = this.finalProgram;
     const drawPgm = this.drawProgram;
 
+    if (gl.getError() == gl.INVALID_VALUE){
+        let newMov = getNewVideoTag()
+        this.inputVideo(newMov)
+    }
 
     if (this.inputMov) {
         updateTexture(gl, this.inputTex, this.inputMov);
@@ -676,10 +680,28 @@ Scaler.prototype.render = function() {
 }
 
 let scaler = null;
+let movOrig = null;
+let board = null;
 
-(function() {
+function insertController(){
+    // let controllerText =
+    //     `
+    //     <div class="anime4k-panel" id="anime4k-panel">
+    //         <span>启用</span>
+    //         <input class="anime4k-switch" type="checkbox" checked="">
+    //         <span>缩放大小</span>
+    //         <input type="number" id="anime4k-scale" value="1.25" min="1.0" max="4.0" step="0.1">
+    //         <span>线条粗细</span>
+    //         <input type="range" id="anime4k-bold" value="6" min="0.0001" max="8" step="0.001">
+    //         <span>模糊</span>
+    //         <input type="range" id="anime4k-blur" value="2" min="0.0001" max="8" step="0.001">
+    //     </div>
+    //     `
+}
+
+function initializeVideoTag(){
     // Find our video tag as input
-    let movOrig = document.getElementsByClassName('bilibili-player-video');
+    movOrig = document.getElementsByClassName('bilibili-player-video');
 
     // I don't know why this happen. Not a clue at all.
     if (movOrig.length == 0){
@@ -690,18 +712,31 @@ let scaler = null;
     movOrig = movOrig[0].firstChild
     // Hide it, we don't need it to be displayed.
     movOrig.style.display = 'none'
+}
 
-    // Setting our parameters for filtering.
-    // scale: multipliers that we need to zoom in.
-    // bold: how heavy the lines are.
-    // blur: how solid the edges are.
-    let scale = 1.0
-    let bold = 6.0
-    let blur = 1.0
+function getNewVideoTag(){
+    if(movOrig.src == ""){
+        // Find our video tag as input
+        movOrig = document.getElementsByClassName('bilibili-player-video');
 
+        // I don't know why this happen. Not a clue at all.
+        if (movOrig.length == 0){
+            console.log("Can't find video tag! This could happen if this anime needs VIP.")
+            return
+        }
+
+        movOrig = movOrig[0].lastChild
+        // Hide it, we don't need it to be displayed.
+        movOrig.style.display = 'none'
+    }
+
+    return movOrig
+}
+
+function createCanvas(){
     // Create a canvas (since video tag do not support WebGL).
-    let board = document.createElement('canvas');
     let div = document.getElementsByClassName('bilibili-player-video')[0]
+    board = document.createElement('canvas');
     // Make it visually fill the positioned parent
     board.style.width ='100%';
     board.style.height='100%';
@@ -710,30 +745,47 @@ let scaler = null;
     board.height = board.offsetHeight;
     // Add it back to the div where contains the video tag we use as input.
     div.appendChild(board)
+}
 
-    // Here's the fun part. We create a pixel shader for our canvas
-    const gl = board.getContext('webgl');
+function doFilter(){
+        // Setting our parameters for filtering.
+        // scale: multipliers that we need to zoom in.
+        // bold: how heavy the lines are.
+        // blur: how solid the edges are.
+        let scale = 1.0
+        let bold = 6.0
+        let blur = 1.0
 
-    movOrig.addEventListener('loadedmetadata', function() {
-        scaler = new Scaler(gl);
-        scaler.inputVideo(movOrig);
-        scaler.resize(scale);
-    }, true);
-    movOrig.addEventListener('error', function() {
-        alert("Can't get the video. Not my bad.");
-    }, true);
+        // Here's the fun part. We create a pixel shader for our canvas
+        const gl = board.getContext('webgl');
 
-    // Do it! Filter it! Profit!
-    function render() {
-        if (scaler) {
-            scaler.bold = bold;
-            scaler.blur = blur;
+        movOrig.addEventListener('loadedmetadata', function() {
+            scaler = new Scaler(gl);
+            scaler.inputVideo(movOrig);
+            scaler.resize(scale);
+        }, true);
+        movOrig.addEventListener('error', function() {
+            alert("Can't get the video. Not my bad.");
+        }, true);
 
-            scaler.render();
+        // Do it! Filter it! Profit!
+        function render() {
+            if (scaler) {
+                scaler.bold = bold;
+                scaler.blur = blur;
+
+                scaler.render();
+            }
+
+            requestAnimationFrame(render);
         }
 
         requestAnimationFrame(render);
-    }
+}
 
-    requestAnimationFrame(render);
+(function() {
+    insertController()
+    createCanvas()
+    initializeVideoTag()
+    doFilter()
 })();
