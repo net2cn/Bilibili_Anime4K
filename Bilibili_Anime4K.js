@@ -6,12 +6,12 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.2.1
+// @version             0.2.2
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
-// @match               *://bangumi.bilibili.com/anime/*/play*
 // @match               *://www.bilibili.com/bangumi/play/ep*
+// @match               *://www.bilibili.com/bangumi/play/ss*
 // @grant               none
 // @license             MIT License
 // @run-at              document-idle

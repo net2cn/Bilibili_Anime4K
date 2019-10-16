@@ -28,4 +28,4 @@ Anime4K相较来说更像是滤镜而不是超分辨率算法，所以不要对�
 # 声明
 这个仓库包含来自由[bloc97](https://github.com/bloc97)共享的[Anime4K](https://github.com/bloc97/Anime4K)仓库的代码.
 
-2019, net2cn, 靠着对动画的♥制作.
+2019, net2cn, 用♥发电.
