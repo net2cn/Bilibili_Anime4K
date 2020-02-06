@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.0
+// @version             0.4.1
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -305,13 +305,13 @@ vec4 LUMA_tex(vec2 pos){
 }
 
 float lumGaussian5(vec2 pos, vec2 d) {
-	float g = LUMA_tex(pos - (d * 2)).x * 0.187691;
+	float g = LUMA_tex(pos - (d * 2.0)).x * 0.187691;
 	g = g + LUMA_tex(pos - d).x * 0.206038;
 	g = g + LUMA_tex(pos).x * 0.212543;
 	g = g + LUMA_tex(pos + d).x * 0.206038;
-	g = g + LUMA_tex(pos + (d * 2)).x * 0.187691;
+	g = g + LUMA_tex(pos + (d * 2.0)).x * 0.187691;
 	
-	return clamp(g, 0, 1); //Clamp for sanity check
+	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
 
@@ -341,13 +341,13 @@ vec4 LUMAG_tex(vec2 pos){
 }
 
 float lumGaussian5(vec2 pos, vec2 d) {
-	float g = LUMAG_tex(pos - (d * 2)).x * 0.187691;
+	float g = LUMAG_tex(pos - (d * 2.0)).x * 0.187691;
 	g = g + LUMAG_tex(pos - d).x * 0.206038;
 	g = g + LUMAG_tex(pos).x * 0.212543;
 	g = g + LUMAG_tex(pos + d).x * 0.206038;
-	g = g + LUMAG_tex(pos + (d * 2)).x * 0.187691;
+	g = g + LUMAG_tex(pos + (d * 2.0)).x * 0.187691;
 	
-	return clamp(g, 0, 1); //Clamp for sanity check
+	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
 void main() {
@@ -389,7 +389,7 @@ void main() {
 	float lumg = clamp(POSTKERNEL_tex(HOOKED_pos).y, 0.001, 0.999);
 
 	float pseudolines = BlendColorDividef(lum, lumg);
-	pseudolines = 1 - clamp(pseudolines - 0.05, 0, 1);
+	pseudolines = 1.0 - clamp(pseudolines - 0.05, 0.0, 1.0);
 
     gl_FragColor = vec4(pseudolines, 0, 0, 0);
 }
@@ -412,13 +412,13 @@ vec4 LUMAG_tex(vec2 pos){
 }
 
 float lumGaussian5(vec2 pos, vec2 d) {
-	float g = LUMAG_tex(pos - (d * 2)).x * 0.187691;
+	float g = LUMAG_tex(pos - (d * 2.0)).x * 0.187691;
 	g = g + LUMAG_tex(pos - d).x * 0.206038;
 	g = g + LUMAG_tex(pos).x * 0.212543;
 	g = g + LUMAG_tex(pos + d).x * 0.206038;
-	g = g + LUMAG_tex(pos + (d * 2)).x * 0.187691;
+	g = g + LUMAG_tex(pos + (d * 2.0)).x * 0.187691;
 	
-	return clamp(g, 0, 1); //Clamp for sanity check
+	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
 
@@ -448,13 +448,13 @@ vec4 LUMAG_tex(vec2 pos){
 }
 
 float lumGaussian5(vec2 pos, vec2 d) {
-	float g = LUMAG_tex(pos - (d * 2)).x * 0.187691;
+	float g = LUMAG_tex(pos - (d * 2.0)).x * 0.187691;
 	g = g + LUMAG_tex(pos - d).x * 0.206038;
 	g = g + LUMAG_tex(pos).x * 0.212543;
 	g = g + LUMAG_tex(pos + d).x * 0.206038;
-	g = g + LUMAG_tex(pos + (d * 2)).x * 0.187691;
+	g = g + LUMAG_tex(pos + (d * 2.0)).x * 0.187691;
 	
-	return clamp(g, 0, 1); //Clamp for sanity check
+	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
 void main() {
@@ -767,6 +767,7 @@ function Scaler(gl) {
     this.quadBuffer = createBuffer(gl, new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]));
     this.framebuffer = gl.createFramebuffer();
 
+    console.log('Compiling shaders...')
     this.scaleProgram = createProgram(gl, quadVert, scaleFrag);
     this.thinLinesProgram = createProgram(gl, quadVert, thinLinesFrag);
     this.lumaProgram = createProgram(gl, quadVert, lumaFrag);
@@ -1080,7 +1081,7 @@ function initializeVideoTag() {
     movOrig = document.getElementsByClassName('bilibili-player-video');
 
     // I don't know why this happen. Not a clue at all.
-    if (movOrig.length == 0) {
+    if (movOrig == null) {
         console.log("Can't find video tag! This could happen if this anime needs VIP.")
         return
     }
@@ -1096,7 +1097,7 @@ function getNewVideoTag() {
         movOrig = document.getElementsByClassName('bilibili-player-video');
 
         // I don't know why this happen. Not a clue at all.
-        if (movOrig.length == 0) {
+        if (movOrig == null) {
             console.log("Can't find video tag! This could happen if this anime needs VIP.")
             return
         }
@@ -1115,7 +1116,7 @@ function createCanvas() {
     let div = document.getElementsByClassName('bilibili-player-video')[0]
 
     // I don't know why this happen. Not a clue at all.
-    if (div.length == 0) {
+    if (div == undefined) {
         console.log("Can't find video tag! This could happen if this anime needs VIP.")
         return
     }
