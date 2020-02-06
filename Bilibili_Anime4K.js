@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.3.0
+// @version             0.4.0
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -300,28 +300,27 @@ vec4 HOOKED_tex(vec2 pos) {
     return texture2D(scaled_texture, pos);
 }
 
-vec4 POSTKERNEL_tex(vec2 pos){
+vec4 LUMA_tex(vec2 pos){
     return texture2D(post_kernel_texture, pos);
 }
 
-float lumGaussian7(vec2 pos, vec2 d) {
-	float g = POSTKERNEL_tex(pos - (d * 3.0)).y * 0.121597;
-	g = g + POSTKERNEL_tex(pos - (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos - d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos).y * 0.160854;
-	g = g + POSTKERNEL_tex(pos + d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos + (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos + (d * 3.0)).y * 0.121597;
-
-	return clamp(g, 0.0, 1.0); //Clamp for sanity check
+float lumGaussian5(vec2 pos, vec2 d) {
+	float g = LUMA_tex(pos - (d * 2)).x * 0.187691;
+	g = g + LUMA_tex(pos - d).x * 0.206038;
+	g = g + LUMA_tex(pos).x * 0.212543;
+	g = g + LUMA_tex(pos + d).x * 0.206038;
+	g = g + LUMA_tex(pos + (d * 2)).x * 0.187691;
+	
+	return clamp(g, 0, 1); //Clamp for sanity check
 }
+
 
 void main() {
     vec2 HOOKED_pos = v_tex_pos;
     vec2 HOOKED_pt = u_pt;
 
-	float g = lumGaussian7(HOOKED_pos, vec2(HOOKED_pt.x, 0));
-    gl_FragColor = vec4(POSTKERNEL_tex(HOOKED_pos).x, g, POSTKERNEL_tex(HOOKED_pos).zw);
+	float g = lumGaussian5(HOOKED_pos, vec2(HOOKED_pt.x, 0));
+    gl_FragColor = vec4(LUMA_tex(HOOKED_pos).x, g, LUMA_tex(HOOKED_pos).zw);
 }
 `;
 
@@ -337,28 +336,26 @@ vec4 HOOKED_tex(vec2 pos) {
     return texture2D(scaled_texture, pos);
 }
 
-vec4 POSTKERNEL_tex(vec2 pos){
+vec4 LUMAG_tex(vec2 pos){
     return texture2D(post_kernel_texture, pos);
 }
 
-float lumGaussian7(vec2 pos, vec2 d) {
-	float g = POSTKERNEL_tex(pos - (d * 3.0)).y * 0.121597;
-	g = g + POSTKERNEL_tex(pos - (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos - d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos).y * 0.160854;
-	g = g + POSTKERNEL_tex(pos + d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos + (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos + (d * 3.0)).y * 0.121597;
-
-	return clamp(g, 0.0, 1.0); //Clamp for sanity check
+float lumGaussian5(vec2 pos, vec2 d) {
+	float g = LUMAG_tex(pos - (d * 2)).x * 0.187691;
+	g = g + LUMAG_tex(pos - d).x * 0.206038;
+	g = g + LUMAG_tex(pos).x * 0.212543;
+	g = g + LUMAG_tex(pos + d).x * 0.206038;
+	g = g + LUMAG_tex(pos + (d * 2)).x * 0.187691;
+	
+	return clamp(g, 0, 1); //Clamp for sanity check
 }
 
 void main() {
     vec2 HOOKED_pos = v_tex_pos;
     vec2 HOOKED_pt = u_pt;
 
-	float g = lumGaussian7(HOOKED_pos, vec2(0, HOOKED_pt.y));
-    gl_FragColor = vec4(POSTKERNEL_tex(HOOKED_pos).x, g, POSTKERNEL_tex(HOOKED_pos).zw);
+	float g = lumGaussian5(HOOKED_pos, vec2(0, HOOKED_pt.y));
+    gl_FragColor = vec4(LUMAG_tex(HOOKED_pos).x, g, LUMAG_tex(HOOKED_pos).zw);
 }
 `;
 
@@ -391,16 +388,10 @@ void main() {
 	float lum = clamp(POSTKERNEL_tex(HOOKED_pos).x, 0.001, 0.999);
 	float lumg = clamp(POSTKERNEL_tex(HOOKED_pos).y, 0.001, 0.999);
 
-	vec4 rgb = HOOKED_tex(HOOKED_pos);
-
 	float pseudolines = BlendColorDividef(lum, lumg);
-	pseudolines = 1.0 - clamp(pseudolines - 0.05, 0.0, 1.0);
-	//float gradlines = abs(lum - lumg);
+	pseudolines = 1 - clamp(pseudolines - 0.05, 0, 1);
 
-	//float lines = clamp(pseudolines - gradlines, 0.0, 1.0);
-	//float linesDiv = 1.0 - clamp((1.0 - pseudolines) / (1.0 - gradlines), 0.0, 1.0);
-
-    gl_FragColor = vec4(lum, pseudolines, 0.0, 0.0);
+    gl_FragColor = vec4(pseudolines, 0, 0, 0);
 }
 `;
 
@@ -416,28 +407,27 @@ vec4 HOOKED_tex(vec2 pos) {
     return texture2D(scaled_texture, pos);
 }
 
-vec4 POSTKERNEL_tex(vec2 pos){
+vec4 LUMAG_tex(vec2 pos){
     return texture2D(post_kernel_texture, pos);
 }
 
-float lumGaussian7(vec2 pos, vec2 d) {
-	float g = POSTKERNEL_tex(pos - (d * 3.0)).y * 0.121597;
-	g = g + POSTKERNEL_tex(pos - (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos - d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos).y * 0.160854;
-	g = g + POSTKERNEL_tex(pos + d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos + (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos + (d * 3.0)).y * 0.121597;
-
-	return clamp(g, 0.0, 1.0); //Clamp for sanity check
+float lumGaussian5(vec2 pos, vec2 d) {
+	float g = LUMAG_tex(pos - (d * 2)).x * 0.187691;
+	g = g + LUMAG_tex(pos - d).x * 0.206038;
+	g = g + LUMAG_tex(pos).x * 0.212543;
+	g = g + LUMAG_tex(pos + d).x * 0.206038;
+	g = g + LUMAG_tex(pos + (d * 2)).x * 0.187691;
+	
+	return clamp(g, 0, 1); //Clamp for sanity check
 }
+
 
 void main() {
     vec2 HOOKED_pos = v_tex_pos;
     vec2 HOOKED_pt = u_pt;
 
-	float g = lumGaussian7(HOOKED_pos, vec2(HOOKED_pt.x, 0.0));
-    gl_FragColor = vec4(POSTKERNEL_tex(HOOKED_pos).x, g, POSTKERNEL_tex(HOOKED_pos).zw);
+	float g = lumGaussian5(HOOKED_pos, vec2(HOOKED_pt.x, 0.0));
+    gl_FragColor = vec4(g, 0, 0, 0);
 }
 `;
 
@@ -453,28 +443,26 @@ vec4 HOOKED_tex(vec2 pos) {
     return texture2D(scaled_texture, pos);
 }
 
-vec4 POSTKERNEL_tex(vec2 pos){
+vec4 LUMAG_tex(vec2 pos){
     return texture2D(post_kernel_texture, pos);
 }
 
-float lumGaussian7(vec2 pos, vec2 d) {
-	float g = POSTKERNEL_tex(pos - (d * 3.0)).y * 0.121597;
-	g = g + POSTKERNEL_tex(pos - (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos - d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos).y * 0.160854;
-	g = g + POSTKERNEL_tex(pos + d).y * 0.155931;
-	g = g + POSTKERNEL_tex(pos + (d * 2.0)).y * 0.142046;
-	g = g + POSTKERNEL_tex(pos + (d * 3.0)).y * 0.121597;
-
-	return clamp(g, 0.0, 1.0); //Clamp for sanity check
+float lumGaussian5(vec2 pos, vec2 d) {
+	float g = LUMAG_tex(pos - (d * 2)).x * 0.187691;
+	g = g + LUMAG_tex(pos - d).x * 0.206038;
+	g = g + LUMAG_tex(pos).x * 0.212543;
+	g = g + LUMAG_tex(pos + d).x * 0.206038;
+	g = g + LUMAG_tex(pos + (d * 2)).x * 0.187691;
+	
+	return clamp(g, 0, 1); //Clamp for sanity check
 }
 
 void main() {
     vec2 HOOKED_pos = v_tex_pos;
     vec2 HOOKED_pt = u_pt;
 
-	float g = lumGaussian7(HOOKED_pos, vec2(0.0, HOOKED_pt.y));
-    gl_FragColor = vec4(POSTKERNEL_tex(HOOKED_pos).x, g, POSTKERNEL_tex(HOOKED_pos).zw);
+	float g = lumGaussian5(HOOKED_pos, vec2(0.0, HOOKED_pt.y));
+    gl_FragColor = vec4(g, 0, 0, 0);
 }
 `;
 
@@ -843,7 +831,6 @@ Scaler.prototype.render = function () {
         return;
     }
 
-
     const gl = this.gl;
     const scalePgm = this.scaleProgram;
     const thinLinesPgm = this.thinLinesProgram;
@@ -860,6 +847,7 @@ Scaler.prototype.render = function () {
 
     // Nasty trick to fix video quailty changing bug.
     if (gl.getError() == gl.INVALID_VALUE) {
+        console.log('glError detected! Fetching new viedo tag... (This may happen due to resolution change)')
         let newMov = getNewVideoTag()
         this.inputVideo(newMov)
     }
@@ -868,6 +856,12 @@ Scaler.prototype.render = function () {
         updateTexture(gl, this.inputTex, this.inputMov);
     }
 
+    // Automatic change scale according to original video resolution.
+    let newScale = 1440 / this.inputMov.videoHeight;
+    if (this.scale != newScale){
+        this.scale = newScale;
+        console.log('Setting scale to ' + this.scale);
+    }
 
     gl.disable(gl.DEPTH_TEST);
     gl.disable(gl.STENCIL_TEST);
@@ -1064,7 +1058,6 @@ Scaler.prototype.render = function () {
 }
 
 // Parameters.
-// TODO: Automatically switch scale depending on video quality. (e.g. targeted quality: 1440p)
 let scaler = null;
 let movOrig = null;
 let board = null;
@@ -1120,6 +1113,13 @@ function getNewVideoTag() {
 function createCanvas() {
     // Create a canvas (since video tag do not support WebGL).
     let div = document.getElementsByClassName('bilibili-player-video')[0]
+
+    // I don't know why this happen. Not a clue at all.
+    if (div.length == 0) {
+        console.log("Can't find video tag! This could happen if this anime needs VIP.")
+        return
+    }
+
     board = document.createElement('canvas');
     // Make it visually fill the positioned parent
     board.style.width = '100%';
@@ -1144,7 +1144,7 @@ function doFilter() {
         scaler.scale = scale;
     }, true);
     movOrig.addEventListener('error', function () {
-        alert("Can't get the video. Not my bad.");
+        alert("Can't get video, sorry.");
     }, true);
 
     // Do it! Filter it! Profit!
@@ -1161,9 +1161,12 @@ function doFilter() {
 }
 
 (function () {
-    console.log('Enabling filter...')
+    console.log('Bilibili_Anime4K starting...')
     insertController()
+    console.log('Injecting canvas...')
     createCanvas()
+    console.log('Hiding elements...')
     initializeVideoTag()
+    console.log('Enabling filter...')
     doFilter()
 })();
