@@ -17,11 +17,12 @@ Actually it is just a filter, not a super-resolution algorithm, so don't have a 
 
 FYI, I've uploaded the original screenshot of both in the "images" folder.
 
-# TODO
-- Support more sites (like ACFun, whatever).
+# Experimental features
+- Support more sites (like ACFun, whatever. Add @match if you want to try out).
+- Not keeping video aspect ratio.
 
 # Issues
-- Cannot be used on VIP bangumi.(section ep*)
+- Even lagger than before.
 
 # Acknowledgements
 This repository contains code from [Anime4K](https://github.com/bloc97/Anime4K) by [bloc97](https://github.com/bloc97).

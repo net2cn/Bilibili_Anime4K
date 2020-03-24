@@ -6,12 +6,13 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.1
+// @version             0.4.2
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
 // @match               *://www.bilibili.com/bangumi/play/ep*
 // @match               *://www.bilibili.com/bangumi/play/ss*
+// @match               *://www.bilibili.com/video/BV*
 // @grant               none
 // @license             MIT License
 // @run-at              document-idle
@@ -1064,62 +1065,14 @@ let movOrig = null;
 let board = null;
 let scale = 2.0;
 
-function insertController() {
-    // let controllerText =
-    //     `
-    //     <div class="anime4k-panel" id="anime4k-panel">
-    //         <span>启用</span>
-    //         <input class="anime4k-switch" type="checkbox" checked="">
-    //         <span>缩放大小</span>
-    //         <input type="number" id="anime4k-scale" value="1.25" min="1.0" max="4.0" step="0.1">
-    //     </div>
-    //     `
-}
+async function injectCanvas() {
+    console.log('Injecting canvas...')
 
-function initializeVideoTag() {
-    // Find our video tag as input
-    movOrig = document.getElementsByClassName('bilibili-player-video');
-
-    // I don't know why this happen. Not a clue at all.
-    if (movOrig == null) {
-        console.log("Can't find video tag! This could happen if this anime needs VIP.")
-        return
-    }
-
-    movOrig = movOrig[0].firstChild
-    // Hide it, we don't need it to be displayed.
-    movOrig.style.display = 'none'
-}
-
-function getNewVideoTag() {
-    if (movOrig.src == "") {
-        // Find our video tag as input
-        movOrig = document.getElementsByClassName('bilibili-player-video');
-
-        // I don't know why this happen. Not a clue at all.
-        if (movOrig == null) {
-            console.log("Can't find video tag! This could happen if this anime needs VIP.")
-            return
-        }
-
-        movOrig = movOrig[0].lastChild
-        // Hide it, we don't need it to be displayed.
-        movOrig.style.display = 'none'
-    }
-
-    scaler.scale = scale;
-    return movOrig
-}
-
-function createCanvas() {
     // Create a canvas (since video tag do not support WebGL).
-    let div = document.getElementsByClassName('bilibili-player-video')[0]
+    movOrig = await getVideoTag()
+    console.log(movOrig)
 
-    // I don't know why this happen. Not a clue at all.
-    if (div == undefined) {
-        console.log("Can't find video tag! This could happen if this anime needs VIP.")
-        return
-    }
+    div = movOrig.parentElement
 
     board = document.createElement('canvas');
     // Make it visually fill the positioned parent
@@ -1130,12 +1083,36 @@ function createCanvas() {
     board.height = board.offsetHeight;
     // Add it back to the div where contains the video tag we use as input.
     div.appendChild(board)
+
+    // Hide original video tag, we don't need it to be displayed.
+    movOrig.style.display = 'none'
+}
+
+async function getVideoTag() {
+    while(document.getElementsByTagName("video").length <= 0) {
+        await new Promise(r => setTimeout(r, 500));
+    }
+
+    return document.getElementsByTagName("video")[0]
+}
+
+function getNewVideoTag() {
+    // Get video tag.
+    movOrig = document.getElementsByTagName("video")[0]
+
+    // Hide it, we don't need it to be displayed.
+    movOrig.style.display = 'none'
+
+    scaler.scale = scale;
+    return movOrig
 }
 
 function doFilter() {
     // Setting our parameters for filtering.
     // scale: multipliers that we need to zoom in.
     // Here's the fun part. We create a pixel shader for our canvas
+    console.log('Enabling filter...')
+
     const gl = board.getContext('webgl');
 
     movOrig.addEventListener('loadedmetadata', function () {
@@ -1161,13 +1138,8 @@ function doFilter() {
     requestAnimationFrame(render);
 }
 
-(function () {
+(async function () {
     console.log('Bilibili_Anime4K starting...')
-    insertController()
-    console.log('Injecting canvas...')
-    createCanvas()
-    console.log('Hiding elements...')
-    initializeVideoTag()
-    console.log('Enabling filter...')
+    await injectCanvas()
     doFilter()
 })();
