@@ -1,0 +1,27 @@
+{
+  "name": "bilibili_anime4k",
+  "version": "1.0.0",
+  "description": "Bring Anime4K to Bilibili's HTML5 player to clearify 2D anime.",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/net2cn/Bilibili_Anime4K.git"
+  },
+  "author": "net2cn",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/net2cn/Bilibili_Anime4K/issues"
+  },
+  "homepage": "https://github.com/net2cn/Bilibili_Anime4K#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "common-tags": "^1.8.0",
+    "ts-loader": "^5.4.5",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "keywords": []
+}
