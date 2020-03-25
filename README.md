@@ -19,10 +19,10 @@ FYI, I've uploaded the original screenshot of both in the "images" folder.
 
 # Experimental features
 - Support more sites (like ACFun, whatever. Add @match if you want to try out).
-- Not keeping video aspect ratio.
 
 # Issues
 - Even lagger than before.
+- Not keeping video aspect ratio.
 
 # Acknowledgements
 This repository contains code from [Anime4K](https://github.com/bloc97/Anime4K) by [bloc97](https://github.com/bloc97).
