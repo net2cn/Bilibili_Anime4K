@@ -22,7 +22,7 @@ FYI, I've uploaded the original screenshot of both in the "images" folder.
 
 # Issues
 - Even lagger than before.
-- Not keeping video aspect ratio.
+- Video not centered. (Damn, I should have learnt some CSS before.)
 
 # Acknowledgements
 This repository contains code from [Anime4K](https://github.com/bloc97/Anime4K) by [bloc97](https://github.com/bloc97).

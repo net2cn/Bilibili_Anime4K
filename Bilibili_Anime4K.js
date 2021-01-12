@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.2
+// @version             0.4.3
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -846,11 +846,21 @@ Scaler.prototype.render = function () {
     const refinePgm = this.refineProgram;
     const fxaaPgm = this.fxaaProgram;
     const drawPgm = this.drawProgram;
+    const defaultRatio = 16/9
 
     // Nasty trick to fix video quailty changing bug.
     if (gl.getError() == gl.INVALID_VALUE) {
         console.log('glError detected! Fetching new viedo tag... (This may happen due to resolution change)')
         let newMov = getNewVideoTag()
+        console.log("Video width: " + newMov.videoWidth)
+        console.log("Video height: " + newMov.videoHeight)
+        let newRatio = newMov.videoWidth/newMov.videoHeight
+        console.log("Video Ratio: " + newRatio)
+        if ((newRatio/defaultRatio - 1) < 0.001) {  // To prevent float precision caused problem.
+            let w = newRatio/defaultRatio*100
+            console.log("Setting new width ratio: " + w + "%")
+            globalBoard.style.width = w + "%"
+        }
         this.inputVideo(newMov)
     }
 
@@ -859,6 +869,7 @@ Scaler.prototype.render = function () {
     }
 
     // Automatic change scale according to original video resolution.
+    // Upscaled to 1440p.
     let newScale = 1440 / this.inputMov.videoHeight;
     if (this.scale != newScale){
         this.scale = newScale;
@@ -1060,32 +1071,32 @@ Scaler.prototype.render = function () {
 }
 
 // Parameters.
-let scaler = null;
-let movOrig = null;
-let board = null;
-let scale = 2.0;
+let globalScaler = null;
+let globalMovOrig = null;
+let globalBoard = null;
+let globalScale = 2.0;
 
 async function injectCanvas() {
     console.log('Injecting canvas...')
 
     // Create a canvas (since video tag do not support WebGL).
-    movOrig = await getVideoTag()
-    console.log(movOrig)
+    globalMovOrig = await getVideoTag()
+    console.log(globalMovOrig)
 
-    div = movOrig.parentElement
+    let div = globalMovOrig.parentElement
 
-    board = document.createElement('canvas');
+    globalBoard = document.createElement('canvas');
     // Make it visually fill the positioned parent
-    board.style.width = '100%';
-    board.style.height = '100%';
+    globalBoard.style.width = '100%';
+    globalBoard.style.height = '100%';
     // ...then set the internal size to match
-    board.width = board.offsetWidth;
-    board.height = board.offsetHeight;
+    globalBoard.width = globalBoard.offsetWidth;
+    globalBoard.height = globalBoard.offsetHeight;
     // Add it back to the div where contains the video tag we use as input.
-    div.appendChild(board)
+    div.appendChild(globalBoard)
 
     // Hide original video tag, we don't need it to be displayed.
-    movOrig.style.display = 'none'
+    globalMovOrig.style.display = 'none'
 }
 
 async function getVideoTag() {
@@ -1098,13 +1109,14 @@ async function getVideoTag() {
 
 function getNewVideoTag() {
     // Get video tag.
-    movOrig = document.getElementsByTagName("video")[0]
+    globalMovOrig = document.getElementsByTagName("video")[0]
 
     // Hide it, we don't need it to be displayed.
-    movOrig.style.display = 'none'
+    globalMovOrig.style.display = 'none'
 
-    scaler.scale = scale;
-    return movOrig
+    globalScaler.scale = globalScale;
+
+    return globalMovOrig
 }
 
 function doFilter() {
@@ -1113,23 +1125,22 @@ function doFilter() {
     // Here's the fun part. We create a pixel shader for our canvas
     console.log('Enabling filter...')
 
-    const gl = board.getContext('webgl');
+    const gl = globalBoard.getContext('webgl');
 
-    movOrig.addEventListener('loadedmetadata', function () {
-        scaler = new Scaler(gl);
-        scaler.inputVideo(movOrig);
-        scaler.resize(scale);
-        scaler.scale = scale;
+    globalMovOrig.addEventListener('loadedmetadata', function () {
+        globalScaler = new Scaler(gl);
+        globalScaler.inputVideo(globalMovOrig);
+        globalScaler.resize(globalScale);
+        globalScaler.scale = globalScale;
     }, true);
-    movOrig.addEventListener('error', function () {
+    globalMovOrig.addEventListener('error', function () {
         alert("Can't get video, sorry.");
     }, true);
 
     // Do it! Filter it! Profit!
     function render() {
-        if (scaler) {
-            scaler.scale;
-            scaler.render();
+        if (globalScaler) {
+            globalScaler.render();
         }
 
         requestAnimationFrame(render);

@@ -22,7 +22,7 @@ Anime4K相较来说更像是滤镜而不是超分辨率算法，所以不要对�
 
 # 已知Bug
 - 更卡了。
-- 没有保留视频比例。
+- 视频没有居中。（淦，我该学点CSS的）
 
 # 声明
 这个仓库包含来自由[bloc97](https://github.com/bloc97)共享的[Anime4K](https://github.com/bloc97/Anime4K)仓库的代码。
