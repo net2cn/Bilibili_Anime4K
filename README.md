@@ -29,4 +29,4 @@ This repository contains code from [Anime4K](https://github.com/bloc97/Anime4K) 
 
 Source code was released under MIT license.
 
-2020, net2cn, made with ♥ of anime.
+2021, net2cn, made with ♥ of anime.
