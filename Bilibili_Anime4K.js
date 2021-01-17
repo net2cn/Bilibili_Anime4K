@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.4
+// @version             0.4.5
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -1094,6 +1094,9 @@ let globalMovOrig = null;
 let globalBoard = null;
 let globalScale = 2.0;
 
+let globalUpdateId, globalPreviousDelta = 0;
+let globalFpsLimit = 30;    // Limit fps to 30 fps. Change here if you want more frames to be rendered. (But usually 30 fps is pretty enough for most anime as they are mostly done on threes.)
+
 async function injectCanvas() {
     console.log('Injecting canvas...')
 
@@ -1155,16 +1158,24 @@ function doFilter() {
         alert("Can't get video, sorry.");
     }, true);
 
+    console.log("Framerate limit is set to " + globalFpsLimit + " FPS.")
     // Do it! Filter it! Profit!
-    function render() {
+    function render(currentDelta) {
+        // Notice that limiting the framerate here did increase performance.
+        globalUpdateId = requestAnimationFrame(render);
+        let delta = currentDelta - globalPreviousDelta;
+
+        if (globalFpsLimit && delta < 1000/globalFpsLimit){
+            return;
+        }
+
         if (globalScaler) {
             globalScaler.render();
         }
-
-        requestAnimationFrame(render);
+        globalPreviousDelta = currentDelta
     }
 
-    requestAnimationFrame(render);
+    globalUpdateId = requestAnimationFrame(render);
 }
 
 (async function () {
