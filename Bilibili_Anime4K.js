@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.3
+// @version             0.4.4
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -765,6 +765,8 @@ function Scaler(gl) {
     this.inputWidth = 0;
     this.inputHeight = 0;
 
+    this.loggedPaused = false;
+
     this.quadBuffer = createBuffer(gl, new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]));
     this.framebuffer = gl.createFramebuffer();
 
@@ -862,6 +864,22 @@ Scaler.prototype.render = function () {
             globalBoard.style.width = w + "%"
         }
         this.inputVideo(newMov)
+    }
+
+    // Check if video is paused.
+    if (this.inputMov.paused){
+        // If paused we stop rendering new frames.
+        if(!this.loggedPaused){
+            console.log("Video paused.")
+            this.loggedPaused = true
+        }
+        return
+    } else {
+        // Else we continue rendering new frames.
+        if(this.loggedPaused){
+            console.log("Video continued.")
+            this.loggedPaused = false
+        }
     }
 
     if (this.inputMov) {
