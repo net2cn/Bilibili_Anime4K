@@ -1,18 +1,19 @@
 // ==UserScript==
 // @name                Bilibili_Anime4K
 // @name:zh-CN          Bilibili Anime4K滤镜
-// @description         Bring Anime4K to Bilibili's HTML5 player to clearify 2D anime.
-// @description:zh-CN   通过Anime4K滤镜让Bilibili上的2D番剧更加清晰
+// @description         Bring Anime4K to Bilibili and ACFun's HTML5 player to clearify 2D anime.
+// @description:zh-CN   通过Anime4K滤镜让Bilibili和ACFun上的2D番剧更加清晰
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.5
+// @version             0.4.6
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
 // @match               *://www.bilibili.com/bangumi/play/ep*
 // @match               *://www.bilibili.com/bangumi/play/ss*
 // @match               *://www.bilibili.com/video/BV*
+// @match               *://www.acfun.cn/bangumi/aa*
 // @grant               none
 // @license             MIT License
 // @run-at              document-idle
@@ -311,7 +312,7 @@ float lumGaussian5(vec2 pos, vec2 d) {
 	g = g + LUMA_tex(pos).x * 0.212543;
 	g = g + LUMA_tex(pos + d).x * 0.206038;
 	g = g + LUMA_tex(pos + (d * 2.0)).x * 0.187691;
-	
+
 	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
@@ -347,7 +348,7 @@ float lumGaussian5(vec2 pos, vec2 d) {
 	g = g + LUMAG_tex(pos).x * 0.212543;
 	g = g + LUMAG_tex(pos + d).x * 0.206038;
 	g = g + LUMAG_tex(pos + (d * 2.0)).x * 0.187691;
-	
+
 	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
@@ -418,7 +419,7 @@ float lumGaussian5(vec2 pos, vec2 d) {
 	g = g + LUMAG_tex(pos).x * 0.212543;
 	g = g + LUMAG_tex(pos + d).x * 0.206038;
 	g = g + LUMAG_tex(pos + (d * 2.0)).x * 0.187691;
-	
+
 	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
@@ -454,7 +455,7 @@ float lumGaussian5(vec2 pos, vec2 d) {
 	g = g + LUMAG_tex(pos).x * 0.212543;
 	g = g + LUMAG_tex(pos + d).x * 0.206038;
 	g = g + LUMAG_tex(pos + (d * 2.0)).x * 0.187691;
-	
+
 	return clamp(g, 0.0, 1.0); //Clamp for sanity check
 }
 
@@ -1105,6 +1106,7 @@ async function injectCanvas() {
     console.log(globalMovOrig)
 
     let div = globalMovOrig.parentElement
+    div.style.backgroundColor = "black" // Patch for ACFun.
 
     globalBoard = document.createElement('canvas');
     // Make it visually fill the positioned parent

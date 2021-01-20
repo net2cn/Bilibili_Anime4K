@@ -1,5 +1,5 @@
 # Bilibili_Anime4K
-通过Anime4K滤镜让[Bilibili](https://www.bilibili.com/)上的2D番剧更加锐利!
+通过Anime4K滤镜让[Bilibili](https://www.bilibili.com/)与[ACFun](https://www.acfun.cn/)上的2D番剧更加锐利!
 
 [[English README]](README.md)
 
@@ -18,11 +18,12 @@ Anime4K相较来说更像是滤镜而不是超分辨率算法，所以不要对�
 对了，我在images文件夹里上传了原始的未开滤镜和开滤镜的截图。
 
 # 实验性功能
-- 支持更多的站点（比如ACFun啥的，请自行添加match测试）。
+- 支持ACFun。
 
 # 已知Bug
 - 更卡了。
 - 视频没有居中。（淦，我该学点CSS的）
+- 在ACFun上不能点击视频暂停了。
 
 # 声明
 这个仓库包含来自由[bloc97](https://github.com/bloc97)共享的[Anime4K](https://github.com/bloc97/Anime4K)仓库的代码。

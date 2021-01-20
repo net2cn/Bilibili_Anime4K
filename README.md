@@ -1,5 +1,5 @@
 # Bilibili_Anime4K
-Bring Anime4K filter to all the 2D anime you love on [Bilibili](https://www.bilibili.com/)!
+Bring Anime4K filter to all the 2D anime you love on [Bilibili](https://www.bilibili.com/) and [ACFun](https://www.acfun.cn/)!
 
 [[中文README]](README_zh.md)
 
@@ -18,11 +18,12 @@ Actually it is just a filter, not a super-resolution algorithm, so don't have a 
 FYI, I've uploaded the original screenshot of both in the "images" folder.
 
 # Experimental features
-- Support more sites (like ACFun, whatever. Add @match if you want to try out).
+- Support ACFun.
 
 # Issues
 - Even lagger than before.
 - Video not centered. (Damn, I should have learnt some CSS before.)
+- You can no longer click the video to pause it if you're on ACFun.
 
 # Acknowledgements
 This repository contains code from [Anime4K](https://github.com/bloc97/Anime4K) by [bloc97](https://github.com/bloc97).
