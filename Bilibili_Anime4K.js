@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.7
+// @version             0.4.8
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -787,8 +787,9 @@ function Scaler(gl) {
     this.postKernelTexture2 = null;
 
     this.scale = 1.0;
+    this.currentRatio = 16/9;
     this.screenRatio = window.screen.availWidth/window.screen.availHeight;
-    this.playerRatio = 16/9
+    this.playerRatio = 16/9 // Assuming default player ratio is 16:9 (this is true for Bilibili and ACFun).
     this.isLoggedPaused = false;
     this.isFullscreen = true;   // Setting this to true to resize the board on start.
     console.log("Default screen aspect ratio is set to " + this.screenRatio)
@@ -836,17 +837,23 @@ Scaler.prototype.resize = function (scale) {
 }
 
 Scaler.prototype.resizeBoard = function(originRatio, newRatio){
-    if ((originRatio/newRatio - 1) < 0.001){    // To prevent precision-caused problem.
+    if (Math.abs(originRatio-newRatio) > 0.001){    // To prevent precision-caused problem.
         console.log("Video ratio mismatched!")
         console.log("Video Ratio: " + originRatio)
-        console.log("Video width: " + this.inputMov.videoWidth)
-        console.log("Video height: " + this.inputMov.videoHeight)
         console.log("Screen ratio: " + newRatio)
-        let newWidth = originRatio/newRatio*100
-        console.log("Setting new width precentage: " + newWidth + "%")
-        globalBoard.style.width = newWidth + "%"
-        globalBoard.style.marginLeft = (100-newWidth)/2 + "%"
+        if(originRatio>newRatio){   // Not-so-wide screen, change height.
+            let newHeight = newRatio/originRatio*100
+            console.log("Setting new height precentage: " + newHeight + "%")
+            globalBoard.style.height = newHeight + "%"
+            globalBoard.style.marginTop = (100-newHeight)/3 + "%"
+        } else {    // Wide screen, change width.
+            let newWidth = originRatio/newRatio*100
+            console.log("Setting new width precentage: " + newWidth + "%")
+            globalBoard.style.width = newWidth + "%"
+            globalBoard.style.marginLeft = (100-newWidth)/2 + "%"
+        }
     }
+    this.currentRatio = newRatio
 }
 
 Scaler.prototype.render = function () {
@@ -885,6 +892,12 @@ Scaler.prototype.render = function () {
     } else {
         if(this.isFullscreen){
             console.log("Fullscreen deactivated.")
+            // Reset all style.
+            globalBoard.style.width = "100%"
+            globalBoard.style.height = "100%"
+            globalBoard.style.marginLeft = null
+            globalBoard.style.marginTop = null
+            // Then re-calculate board ratio.
             this.resizeBoard(videoRatio, this.playerRatio)
             this.isFullscreen = false
         }
