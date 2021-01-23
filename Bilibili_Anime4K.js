@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.6
+// @version             0.4.7
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -766,8 +766,6 @@ function Scaler(gl) {
     this.inputWidth = 0;
     this.inputHeight = 0;
 
-    this.loggedPaused = false;
-
     this.quadBuffer = createBuffer(gl, new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]));
     this.framebuffer = gl.createFramebuffer();
 
@@ -789,6 +787,12 @@ function Scaler(gl) {
     this.postKernelTexture2 = null;
 
     this.scale = 1.0;
+    this.screenRatio = window.screen.availWidth/window.screen.availHeight;
+    this.playerRatio = 16/9
+    this.isLoggedPaused = false;
+    this.isFullscreen = true;   // Setting this to true to resize the board on start.
+    console.log("Default screen aspect ratio is set to " + this.screenRatio)
+    console.log(this)
 }
 
 Scaler.prototype.inputImage = function (img) {
@@ -831,6 +835,20 @@ Scaler.prototype.resize = function (scale) {
     this.postKernelTexture2 = createTexture(gl, gl.LINEAR, emptyPixels, width, height);
 }
 
+Scaler.prototype.resizeBoard = function(originRatio, newRatio){
+    if ((originRatio/newRatio - 1) < 0.001){    // To prevent precision-caused problem.
+        console.log("Video ratio mismatched!")
+        console.log("Video Ratio: " + originRatio)
+        console.log("Video width: " + this.inputMov.videoWidth)
+        console.log("Video height: " + this.inputMov.videoHeight)
+        console.log("Screen ratio: " + newRatio)
+        let newWidth = originRatio/newRatio*100
+        console.log("Setting new width precentage: " + newWidth + "%")
+        globalBoard.style.width = newWidth + "%"
+        globalBoard.style.marginLeft = (100-newWidth)/2 + "%"
+    }
+}
+
 Scaler.prototype.render = function () {
     if (!this.inputTex) {
         return;
@@ -849,37 +867,42 @@ Scaler.prototype.render = function () {
     const refinePgm = this.refineProgram;
     const fxaaPgm = this.fxaaProgram;
     const drawPgm = this.drawProgram;
-    const defaultRatio = 16/9
 
     // Nasty trick to fix video quailty changing bug.
     if (gl.getError() == gl.INVALID_VALUE) {
         console.log('glError detected! Fetching new viedo tag... (This may happen due to resolution change)')
         let newMov = getNewVideoTag()
-        console.log("Video width: " + newMov.videoWidth)
-        console.log("Video height: " + newMov.videoHeight)
-        let newRatio = newMov.videoWidth/newMov.videoHeight
-        console.log("Video Ratio: " + newRatio)
-        if ((newRatio/defaultRatio - 1) < 0.001) {  // To prevent float precision caused problem.
-            let w = newRatio/defaultRatio*100
-            console.log("Setting new width ratio: " + w + "%")
-            globalBoard.style.width = w + "%"
-        }
         this.inputVideo(newMov)
+    }
+
+    let videoRatio = this.inputMov.videoWidth/this.inputMov.videoHeight
+    if (document.fullscreenElement!=null) {  // To prevent float precision caused problem.
+        if(!this.isFullscreen){
+            console.log("Fullscreen detected.")
+            this.resizeBoard(videoRatio, this.screenRatio)
+            this.isFullscreen = true
+        }
+    } else {
+        if(this.isFullscreen){
+            console.log("Fullscreen deactivated.")
+            this.resizeBoard(videoRatio, this.playerRatio)
+            this.isFullscreen = false
+        }
     }
 
     // Check if video is paused.
     if (this.inputMov.paused){
         // If paused we stop rendering new frames.
-        if(!this.loggedPaused){
+        if(!this.isLoggedPaused){
             console.log("Video paused.")
-            this.loggedPaused = true
+            this.isLoggedPaused = true
         }
         return
     } else {
         // Else we continue rendering new frames.
-        if(this.loggedPaused){
+        if(this.isLoggedPaused){
             console.log("Video continued.")
-            this.loggedPaused = false
+            this.isLoggedPaused = false
         }
     }
 

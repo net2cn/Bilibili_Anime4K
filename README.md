@@ -22,7 +22,6 @@ FYI, I've uploaded the original screenshot of both in the "images" folder.
 
 # Issues
 - Even lagger than before.
-- Video not centered. (Damn, I should have learnt some CSS before.)
 - You can no longer click the video to pause it if you're on ACFun.
 
 # Acknowledgements
