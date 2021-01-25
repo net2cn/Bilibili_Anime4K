@@ -1,4 +1,4 @@
-# Bilibili_Anime4K
+# Bilibili_Anime4K_Experimental
 Bring Anime4K filter to all the 2D anime you love on [Bilibili](https://www.bilibili.com/) and [ACFun](https://www.acfun.cn/)!
 
 [[中文README]](README_zh.md)
@@ -13,7 +13,7 @@ If you want to disable filter for some video just disable the script in your Tam
 # Comparison on 360p
 ![Comparison](images/Comparison.png?raw=true)
 
-Actually it is just a filter, not a super-resolution algorithm, so don't have a super high expectaion on super-low resolution like 360p. However, if you are running 720p or higher it actually would have a better viewer experience with sharper lines and colors (and of course, lagging your computer).
+I've updated the script with the latest version of Anime4K [Anime4K_Upscale_CNN_M_x2_Deblur](https://github.com/bloc97/Anime4K/blob/master/glsl/Upscale%2BDeblur/Anime4K_Upscale_CNN_M_x2_Deblur.glsl). Note that this version runs on a deep learning algorithm according to the original author, hence may cause your computer to by laggy while playing the anime.
 
 FYI, I've uploaded the original screenshot of both in the "images" folder.
 

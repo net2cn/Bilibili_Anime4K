@@ -1,4 +1,4 @@
-# Bilibili_Anime4K
+# Bilibili_Anime4K_Experimental
 通过Anime4K滤镜让[Bilibili](https://www.bilibili.com/)与[ACFun](https://www.acfun.cn/)上的2D番剧更加锐利!
 
 [[English README]](README.md)
@@ -13,7 +13,7 @@
 # 360p分辨率上的对比
 ![对比](images/Comparison.png?raw=true)
 
-Anime4K相较来说更像是滤镜而不是超分辨率算法，所以不要对它在超低的如360p的分辨率上有过高的预期。不过，如果你正在观看720p或者更高的分辨率的话，实际上会有更好的体验，因为线和色块的边缘变得更加锐利了（而且当然会让你的电脑变卡）。
+我更新了内置的滤镜着色器，使其与Anime4K官方的[Anime4K_Upscale_CNN_M_x2_Deblur](https://github.com/bloc97/Anime4K/blob/master/glsl/Upscale%2BDeblur/Anime4K_Upscale_CNN_M_x2_Deblur.glsl)版本相同。根据原作者的介绍这个版本基于深度学习算法，有可能导致你的计算机在播放动画时卡顿。
 
 对了，我在images文件夹里上传了原始的未开滤镜和开滤镜的截图。
 
