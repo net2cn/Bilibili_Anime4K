@@ -787,7 +787,6 @@ function Scaler(gl) {
     this.postKernelTexture2 = null;
 
     this.scale = 1.0;
-    this.currentRatio = 16/9;
     this.screenRatio = window.screen.availWidth/window.screen.availHeight;
     this.playerRatio = 16/9 // Assuming default player ratio is 16:9 (this is true for Bilibili and ACFun).
     this.isLoggedPaused = false;
@@ -853,7 +852,6 @@ Scaler.prototype.resizeBoard = function(originRatio, newRatio){
             globalBoard.style.marginLeft = (100-newWidth)/2 + "%"
         }
     }
-    this.currentRatio = newRatio
 }
 
 Scaler.prototype.render = function () {
