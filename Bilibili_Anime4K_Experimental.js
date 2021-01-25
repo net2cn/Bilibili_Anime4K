@@ -880,7 +880,7 @@ function Scaler(gl) {
     this.luman6Texture = null;
 
     this.scale = 1.0;
-    this.screenRatio = window.screen.availWidth/window.screen.availHeight;
+    this.screenRatio = window.screen.width/window.screen.height;
     this.playerRatio = 16/9 // Assuming default player ratio is 16:9 (this is true for Bilibili and ACFun).
     this.isLoggedPaused = false;
     this.isFullscreen = true;   // Setting this to true to resize the board on start.
