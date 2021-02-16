@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.9
+// @version             0.4.10
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -1132,6 +1132,49 @@ let globalScale = 2.0;
 let globalUpdateId, globalPreviousDelta = 0;
 let globalFpsLimit = 30;    // Limit fps to 30 fps. Change here if you want more frames to be rendered. (But usually 30 fps is pretty enough for most anime as they are mostly done on threes.)
 
+function getScreenRefreshRate(callback, runIndefinitely = false){
+    let requestId = null;
+    let callbackTriggered = false;
+    runIndefinitely = runIndefinitely || false;
+
+    if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame;
+    }
+    
+    let DOMHighResTimeStampCollection = [];
+
+    let triggerAnimation = function(DOMHighResTimeStamp){
+        DOMHighResTimeStampCollection.unshift(DOMHighResTimeStamp);
+        
+        if (DOMHighResTimeStampCollection.length > 10) {
+            let t0 = DOMHighResTimeStampCollection.pop();
+            let fps = Math.floor(1000 * 10 / (DOMHighResTimeStamp - t0));
+
+            if(!callbackTriggered){
+                callback.call(undefined, fps, DOMHighResTimeStampCollection);
+            }
+
+            if(runIndefinitely){
+                callbackTriggered = false;
+            }else{
+                callbackTriggered = true;
+            }
+        }
+    
+        requestId = window.requestAnimationFrame(triggerAnimation);
+    };
+    
+    window.requestAnimationFrame(triggerAnimation);
+
+    // Stop after half second if it shouldn't run indefinitely
+    if(!runIndefinitely){
+        window.setTimeout(function(){
+            window.cancelAnimationFrame(requestId);
+            requestId = null;
+        }, 500);
+    }
+}
+
 async function injectCanvas() {
     console.log('Injecting canvas...')
 
@@ -1194,7 +1237,13 @@ function doFilter() {
         alert("Can't get video, sorry.");
     }, true);
 
-    console.log("Framerate limit is set to " + globalFpsLimit + " FPS.")
+    // Auto detect refresh rate.
+    getScreenRefreshRate(function(screenRefreshRate){
+        globalFpsLimit = Math.floor((screenRefreshRate+1) / 2);
+        globalFpsLimit = globalFpsLimit<30?30:globalFpsLimit;   // If refresh rate is below 30 fps we round it up to 30.
+        console.log("Framerate limit is set to " + globalFpsLimit + " FPS.");
+    });
+
     // Do it! Filter it! Profit!
     function render(currentDelta) {
         // Notice that limiting the framerate here did increase performance.
