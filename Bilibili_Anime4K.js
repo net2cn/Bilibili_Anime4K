@@ -268,13 +268,13 @@ void main() {
 const lumaFrag = `
 precision mediump float;
 
-uniform sampler2D scaled_texuture;
+uniform sampler2D scaled_texture;
 uniform sampler2D post_kernel_texture;
 uniform vec2 u_pt;
 varying vec2 v_tex_pos;
 
 vec4 HOOKED_tex(vec2 pos) {
-    return texture2D(scaled_texuture, pos);
+    return texture2D(scaled_texture, pos);
 }
 
 float getLum(vec4 rgb) {
