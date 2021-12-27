@@ -6,7 +6,7 @@
 // @namespace           http://net2cn.tk/
 // @homepageURL         https://github.com/net2cn/Bilibili_Anime4K/
 // @supportURL          https://github.com/net2cn/Bilibili_Anime4K/issues
-// @version             0.4.11
+// @version             0.4.12
 // @author              net2cn
 // @copyright           bloc97, DextroseRe, NeuroWhAI, and all contributors of Anime4K
 // @match               *://www.bilibili.com/video/av*
@@ -854,7 +854,7 @@ Scaler.prototype.resizeBoard = function(originRatio, newRatio){
 }
 
 Scaler.prototype.render = async function () {
-    if (!this.inputTex) {
+    if (!this.inputMov || !this.inputTex) {
         return;
     }
 
@@ -1182,10 +1182,13 @@ async function injectCanvas() {
     globalMovOrig = await getVideoTag()
 
     let div = globalMovOrig.parentElement
-    while(div.className!="bilibili-player-video") {
-        await new Promise(r => setTimeout(r, 500));
+    if(window.location.href.toLowerCase().includes("bilibili.com")){
+        console.log("Working on bilibili.com.")
+        while(div.className!="bilibili-player-video") {
+            await new Promise(r => setTimeout(r, 500));
+        }
+        div = globalMovOrig.parentElement
     }
-    div = globalMovOrig.parentElement
     div.style.backgroundColor = "black" // Patch for ACFun.
 
     if (!globalBoard){
